@@ -35,7 +35,7 @@ users.post('/exist', async ctx=>{
   // const result = await User.isExistFromUUID(bufUUID);
 
   let myToken;
-
+  // TODO: 밑에 소스 분기 안해도 풀리는 지 확인 필요
   if(isExist){
     myToken = token.get({UUID: isExist.uuid});
     const bufUUID = Buffer.from(isExist.uuid, 'hex');
