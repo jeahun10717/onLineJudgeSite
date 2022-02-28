@@ -20,8 +20,26 @@ paths:
                   토큰이 유효하지 않으면 오류를 뱉는다.
       responses:
         '200':
-          $ref: '#/components/responses/200'
-
+          description: BearerAuth Token 으로 검증해서 있는 사람이면 그 사람 정보 출력
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  result:
+                    uuid: 49C3FA765CCF89EFB632FE376142194A,
+                    login_type: 2,
+                    login_id: kakao:2064419967,
+                    auth: 1,
+                    pw: null,
+                    phone: 01033810954,
+                    name: 성제훈,
+                    email: jeahun10717@gmail.com,
+                    regist_at: 2022-01-05T16:27:46.000Z,
+                    student_ID: 1705645
+        '401':
+          $ref: '#/components/responses/401'
   /users/userInfo/token:
     get:
       security:
@@ -29,11 +47,20 @@ paths:
       tags:
         - User
       summary: 로그인 확인하는 API
-      description: 만료기간 reset 되며 새로운 토큰이 발행됨.</br> BearerAuth 에 토큰이 무조건 존재해야지 검증이 가능함.
+      description: 만료기간 reset 되며 새로운 토큰이 발행됨.
       responses:
         '200':
-          $ref: '#/components/responses/200'
-
+          description: BearerAuth Token 으로 검증해서 있는 사람이면 그 사람 정보 출력
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 200
+                  result:
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiNDlDM0ZBNzY1Q0NGODlFRkI2MzJGRTM3NjE0MjE5NEEiLCJpYXQiOjE2NDYwMzA5NTksImV4cCI6MTY0NjYzNTc1OX0.-icHKfP1bj9qDruNL-vESs27traqR2jmeOmKQRxZESg
+        '401':
+          $ref: '#/components/responses/401'
   /users/exist:
     post:
       tags:
@@ -59,18 +86,6 @@ paths:
                   description: 로그인 버튼 누르고 나오는 url 에서 받아오는 access_token 임
       responses:
         '200':
-          description: response 가 200 && 이미 유저가 존재할 떄 </br> 또한 access_token 은 bearerAuth 에 넣을 토큰임
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  status: 200
-                  data:
-                    Auth: 1
-                    isExist: true
-                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-        '201':
           description: response 가 200 && 이미 유저가 존재할 떄 </br> 또한 access_token 은 bearerAuth 에 넣을 토큰임
           content:
             application/json:
@@ -119,12 +134,16 @@ paths:
                 email:
                   type: string
                   description: 회원의 이메일
+                student_ID:
+                  type: string
+                  description: 회원의 학번
               required:
                 - login_type
                 - access_token
                 - phone
                 - name
                 - email
+                - student_ID
       responses:
         '200':
           description: OK

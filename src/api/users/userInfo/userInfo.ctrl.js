@@ -31,7 +31,7 @@ exports.token = async(ctx)=>{
 
     ctx.body={
         status:200,
-        data:{
+        result:{
             token:token.get({UUID}),   // 여기서 던져주는 token 은 새로운 token 임
                                        // TODO: 토큰 만료기간 설정하고 나중에 되는지 확인해야 함
                                        // UUID 로 받아오는 토큰 1번, 새로 받아오는 토큰 2번
