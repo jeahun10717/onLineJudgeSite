@@ -9,7 +9,7 @@ servers:
 
 paths:
 # === User ======================================================================
-  /users/userInfo/userMe:
+  /users/userMe:
     get:
       security:
         - BearerAuth: []
@@ -40,7 +40,7 @@ paths:
                     student_ID: 1705645
         '401':
           $ref: '#/components/responses/401'
-  /users/userInfo/token:
+  /users/token:
     get:
       security:
         - BearerAuth: []
@@ -159,8 +159,6 @@ paths:
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-
-  /users/userinfo/show:
     get:
       security:
         - BearerAuth: []
@@ -199,24 +197,75 @@ paths:
                 example:
                   status: 200
                   result:
-                    user_id: 유저 ID
-                    Auth: 권한
-                    phone: 폰 번호
-                    name: 이름
-                    realty_name: 부동산 이름
-                    realty_address: 부동산 주소
-                    realty_owner_name: 부동산 대표 이름
-                    realty_owner_phone: 부동산 대표 전화번호
-                    registAt: 등록일
+                    login_type: 2  
+                    access_token:   
+                    phone:  
+                    name:   
+                    email:  
+                    student_ID:   
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 유저 수정
+      description: >
+        user create 부분에서 추가 입력한 부분만 update 하는 api
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  description: 추가입력 때 받은 폰번호
+                name:
+                  type: string
+                  description: 추가입력 떄 받은 이름
+                email:
+                  type: string
+                  description: 추가입력 때 받은 이메일
+                student_ID:
+                  type: string
+                  description: 추가입력 때 받은 학번
+              required:
+                - phone
+                - name
+                - email
+                - student_ID
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
 
-  /users/userInfo/search:
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - User
+      summary: 회원 탈퇴(유저 본인)
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: 400
+                  code: 0
+                  msg: 아이디가 없음
+
+  /users/admin:
     get:
       security:
         - BearerAuth: []
       tags:
         - User
       summary: 필터를 통한 유저검색
-      description: 필터 -> 유저이름, 부동산이름, 부동산대표이름
+      description: 필터 -> 유저이름, 유저이메일, 유저의 학번
       parameters:
         - in: query
           name: search
@@ -240,9 +289,9 @@ paths:
             type: string
             enum:
               - name
-              - realty_name
-              - realty_owner_name
-          description: 유저이름, 부동산이름, 부동산대표이름
+              - email
+              - student_ID
+          description: 유저이름, 유저이메일, 유저의 학번
           required: true
         - in: query
           name: page
@@ -254,54 +303,7 @@ paths:
       responses:
         '200':
             $ref: '#/components/responses/200'
-
-
-  /users/userInfo/update:
-    post:
-      security:
-        - BearerAuth: []
-      tags:
-        - User
-      summary: 유저 수정
-      description: >
-        user create 부분에서 추가 입력한 부분만 update 하는 api
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                phone:
-                  type: string
-                  description: 추가입력 때 입력한 전화번호 ('-' 넣으면 안됨)
-                name:
-                  type: string
-                  description: 추가입력 때 입력한 이름
-                realty_name:
-                  type: string
-                  description: 추가입력 때 입력한 부동산 이름
-                realty_address:
-                  type: string
-                  description: 추가입력 때 입력한 부동산 주소
-                realty_owner_name:
-                  type: string
-                  description: 추가입력 대 입력한 부동산 대표 이름
-                realty_owner_phone:
-                  type: string
-                  description: 추가입력 때 입력한 부동산 대표 전화번호 ('-' 넣으면 안됨)
-              required:
-                - name
-                - phone
-                - realty_name
-                - realty_address
-                - realty_owner_name
-                - realty_owner_phone
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-
-  /users/userInfo/userUpdate:
-    post:
+    put:
       security:
         - BearerAuth: []
       tags:
@@ -312,19 +314,6 @@ paths:
                   만약 마스터관리자가 자신의 권한을 낮추고 싶을 경우 아래의 플로우를 따름</br>
                   전체 유저중 마스터 관리자가 2명 이상일 때 -> 자신의 권한 낮추는 거 가능</br>
                   전체 유저중 마스터 관리자가 2명 미만일 때 -> 자신의 권한 낮추는 거 불가
-      # parameters:
-      #   - in: query
-      #     name: target
-      #     schema:
-      #       type: string
-      #       enum:
-      #         - me
-      #         - other
-      #       default:
-      #         - other
-      #       description: me 는 자신의 정보 수정, other 은 다른사람 정보수정
-      #       required: true
-
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -333,66 +322,34 @@ paths:
               properties:
                 uuid:
                   type: string
-                  description: 유저를 특정할 uuid
+                  description: 유저 식별을 위한 uuid
                 auth:
                   type: string
-                  description: 수정할 auth(api 의 description 참조)
+                  description: 유저의 권한
                 phone:
                   type: string
                   description: 유저의 전화번호
                 name:
                   type: string
                   description: 유저의 이름
-                realty_name:
+                email:
                   type: string
-                  description: 유저의 부동산 이름
-                realty_address:
+                  description: 유저의 이메일
+                student_ID:
                   type: string
-                  description: 유저의 부동산 주소
-                realty_owner_name:
-                  type: string
-                  description: 유저의 부동산 대표 이름
-                realty_owner_phone:
-                  type: string
-                  description: 유저의 부동산 대표 전화번호
+                  description: 유저의 학번 
               required:
                 - uuid
                 - auth
                 - phone
                 - name
-                - realty_name
-                - realty_address
-                - realty_owner_name
-                - realty_owner_phone
+                - email
+                - student_ID
 
       responses:
         '200':
           $ref: '#/components/responses/200'
 
-
-
-  /users/userInfo/delete:
-    delete:
-      security:
-        - BearerAuth: []
-      tags:
-        - User
-      summary: 회원 탈퇴(유저 본인)
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-        '400':
-          description: bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  status: 400
-                  code: 0
-                  msg: 아이디가 없음
-
-  /users/userInfo/userDelete:
     delete:
       security:
         - BearerAuth: []
@@ -411,6 +368,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200'
+
+
 
 # === components =========================================================
 components:

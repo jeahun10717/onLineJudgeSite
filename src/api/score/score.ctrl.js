@@ -3,7 +3,6 @@ const Joi = require('joi');
 
 // TODO: path 모듈 써서 dest 일반화 하기
 
-
 exports.multerTest = async (ctx) => {
     console.log(ctx.request.files);
     ctx.body = {

@@ -13,7 +13,7 @@ alter table users drop primary key;
 select * from information_schema.table_constraints WHERE  table_name = 'users';
 show indexes in users;
 select uuid_2 from users;
-alter table users add student_ID varchar(10);
+alter table users modify name varchar(30);
 
 create table users(
     uuid binary(16) unique primary key,

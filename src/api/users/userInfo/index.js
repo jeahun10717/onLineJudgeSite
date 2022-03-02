@@ -1,33 +1,33 @@
-const Router = require('koa-router');
-const userInfo = new Router();
-const userInfoCtrl = require('./userInfo.ctrl');
-const { auth } = require('../../../lib');
+// const Router = require('koa-router');
+// const users = new Router();
+// const userInfoCtrl = require('./userInfo.ctrl');
+// const { auth } = require('../../../lib');
 
-userInfo
-.get('/getAllAdm', userInfoCtrl.getAllAdm);
+// users
+// .get('/getAllAdm', usersCtrl.getAllAdm);
 
-userInfo.use(auth.login);
-userInfo.use(auth.level1);
+// users.use(auth.login);
+// users.use(auth.level1);
 
-userInfo
-.get('/token', userInfoCtrl.token)
-.get('/userMe', userInfoCtrl.userMe)
-.post('/update', userInfoCtrl.update)  // 자신의 회원정보수
-.delete('/delete', userInfoCtrl.delete)  // 자신의 회원 탈퇴
+// users
+// .get('/token', usersCtrl.token)
+// .get('/userMe', usersCtrl.userMe)
+// .post('/update', usersCtrl.update)  // 자신의 회원정보수
+// .delete('/delete', usersCtrl.delete)  // 자신의 회원 탈퇴
 
-userInfo.use(auth.level2);
+// users.use(auth.level2);
 
-userInfo// create 은 user 라우트 단계에서 처리됨.
-.get('/show', userInfoCtrl.show)
-.get('/search', userInfoCtrl.search)
-//TODO: search filter 걸어서 만들기
+// users// create 은 user 라우트 단계에서 처리됨.
+// .get('/show', usersCtrl.show)
+// .get('/search', usersCtrl.search)
+// //TODO: search filter 걸어서 만들기
 
-userInfo.use(auth.level3);
+// users.use(auth.level3);
 
-userInfo
-.post('/userUpdate', userInfoCtrl.userUpdate)
-.delete('/userDelete', userInfoCtrl.userDelete);
-// .post('/setAdmin', userInfoCtrl.setADM)  // 회원 관리자 승격/강등 관리
-// .post('/setMasterAdmin', userInfoCtrl.setMasterADM)  // 최고 관리자 승격/강등 관리
+// users
+// .post('/userUpdate', usersCtrl.userUpdate)
+// .delete('/userDelete', usersCtrl.userDelete);
+// // .post('/setAdmin', usersCtrl.setADM)  // 회원 관리자 승격/강등 관리
+// // .post('/setMasterAdmin', usersCtrl.setMasterADM)  // 최고 관리자 승격/강등 관리
 
-module.exports = userInfo
+// module.exports = userInfo

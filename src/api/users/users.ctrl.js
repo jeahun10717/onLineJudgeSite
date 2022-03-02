@@ -1,12 +1,141 @@
 const Joi = require('joi');
-const { user } = require('../../../databases');
-const axios = require('axios');
-const { token } = require('../../../lib');
+const { user } = require('../../databases');
+// const { token } = require('../../lib');
+const axios = require('axios')
+const kakao = require('./kakao');
+const { oauth,token,auth,login } = require('../../lib');
 
 const { KAKAO_ADMIN_KEY } = process.env;
 
 // TODO: 퍼블리싱 하기 전에 밑에 부분 30 으로 고쳐야 함
 const contentNum = 15;
+
+exports.isExist = async (ctx) => {
+    const params = Joi.object({
+        login_type: Joi.number().integer().min(1).max(2).required(),
+        access_token: Joi.string().required()
+    }).validate(ctx.request.body);
+    if (params.error) ctx.throw(400, '잘못된 요청');
+
+    const {
+        login_type,
+        access_token
+    } = params.value;
+    let login_id;
+    // kakao
+    if (login_type === 2) {
+        const kakaoData = await oauth.kakaoData(access_token);
+        login_id = `kakao:${kakaoData.id}`;
+    } else if (login_type === 1) {
+        const naverData = await oauth.naverData(access_token);
+        login_id = `naver:${naverData.id}`;
+    }
+    const isExist = await user.isExist(login_type, login_id);
+
+    // const bufUUID = Buffer.from(isExist.uuid, 'hex');
+    // const result = await User.isExistFromUUID(bufUUID);
+
+    let myToken;
+    // TODO: 밑에 소스 분기 안해도 풀리는 지 확인 필요
+    if (isExist) {
+        myToken = token.get({
+            UUID: isExist.uuid
+        });
+        const bufUUID = Buffer.from(isExist.uuid, 'hex');
+        const result = await user.isExistFromUUID(bufUUID);
+        // console.log(result.Auth);
+        // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        ctx.body = {
+            status: 200,
+            data: {
+                Auth: result.Auth,
+                isExist: isExist ? true : false,
+                access_token: myToken
+            }
+        }
+    } else {
+        ctx.body = {
+            status: 200,
+            data: {
+                isExist: isExist ? true : false,
+                access_token: myToken,
+                // Auth: result.Auth
+            }
+        }
+    }
+}
+
+exports.regist = async(ctx, next) => {
+    const params = Joi.object({
+        login_type: Joi.number().integer().min(1).max(2).required(),
+        access_token: Joi.string().required(),
+        phone: Joi.string().regex(/^[0-9]{8,13}$/).required(), // 회원전화번호
+        name: Joi.string().max(30).required(), // 회원 이름
+        email: Joi.string().email().required(),
+        student_ID: Joi.string().required(),
+        regist_at: Joi.string().isoDate().default(new Date())
+      }).validate(ctx.request.body);
+    
+      // console.log(params.error[0]);
+      // console.log();
+      // console.log(params.error.details[0].message);
+    
+      // console.log(throwErrMsg);
+      if (params.error) {
+        const errorMsg = params.error.details[0].message;
+        const regexp = new RegExp(/^\"[a-zA-Z\_]{0,}\"/, "g");
+        const throwErrMsg = regexp.exec(errorMsg);
+        ctx.throw(400, throwErrMsg[0])
+      };
+    
+      const {
+        access_token,
+        login_type,
+        ...rest
+      } = params.value;
+    
+      let login_id;
+    
+      if (login_type === 2) { // kakao login
+        const kakaoData = await oauth.kakaoData(access_token);
+        const result = await user.isExistFromUserID(`kakao:${kakaoData.id}`)
+        if (result) ctx.throw(400, "이미 존재하는 유저입니다.")
+        // console.log(result);
+        login_id = `kakao:${kakaoData.id}`;
+      } else if (login_type === 1) { // naver login
+        const naverData = await oauth.naverData(access_token);
+        // console.log(naverData);
+        const result = await user.isExistFromUserID(`naver:${naverData.id}`)
+        if (result) ctx.throw(400, "이미 존재하는 유저입니다.")
+        login_id = `naver:${naverData.id}`;
+      }
+    
+      // try{ // TODO: 이 부분에 왜 try-catch 로 했는지 확인하고 나중에 수정하기
+      const userToken = await login.regist({
+        login_type,
+        login_id,
+        ...rest
+      })
+      //   });
+      // }catch(e){
+      //   throw(400,e);
+      // }
+      // console.log(params);
+      // console.log(params.value);
+      // console.log(ctx.request.user);
+      // console.log(UUID);
+    
+      // query=ctx.request.body
+      // user.update(Buffer.from(UUID, 'hex'), query);
+      // kakao:1659856827
+      ctx.status = 200;
+      ctx.body = {
+        status: 200,
+        result: {
+          userToken: userToken.token
+        }
+      };
+}
 
 exports.userMe = async(ctx)=>{
   const { UUID } = ctx.request.user;
@@ -23,11 +152,12 @@ exports.userMe = async(ctx)=>{
 
 exports.token = async(ctx)=>{
     const { UUID } = ctx.request.user;
-    // console.log(UUID);
     const bufUUID = Buffer.from(UUID, 'hex');
-
     const result = await user.isExistFromUUID(bufUUID);
-    // console.log(result);
+
+    console.log(bufUUID);
+    console.log(result);
+
     if(!result) ctx.throw(401, "인증 오류 입니다.");
 
     ctx.body={
@@ -106,11 +236,9 @@ exports.update = async(ctx)=>{
 
     const params = Joi.object({
         phone: Joi.string().regex(/^[0-9]{8,13}$/).required(), // 회원전화번호
-        name: Joi.string().required(),  // 회원 이름
-        realty_name: Joi.string().required(),
-        realty_address: Joi.string().required(),
-        realty_owner_name: Joi.string().required(),
-        realty_owner_phone: Joi.string().regex(/^[0-9]{8,13}$/).required()
+        name: Joi.string().max(30).required(),  // 회원 이름
+        student_ID: Joi.string().required(),
+        email: Joi.string().email().required(),
     }).validate(ctx.request.body);
 
     if(params.error) {
@@ -140,11 +268,8 @@ exports.userUpdate = async(ctx)=>{
     uuid: Joi.string().custom(v=>Buffer.from(v,'hex')).required(),
     auth: Joi.number().integer().valid(0,1,2,3).required(),
     phone: Joi.string().regex(/^[0-9]{8,13}$/).required(), // 회원전화번호
-    name: Joi.string().required(),  // 회원 이름
-    realty_name: Joi.string().required(),
-    realty_address: Joi.string().required(),
-    realty_owner_name: Joi.string().required(),
-    realty_owner_phone: Joi.string().regex(/^[0-9]{8,13}$/).required()
+    name: Joi.string().max(30).required(),  // 회원 이름
+    student_ID: Joi.string().required()
   }).validate(ctx.request.body);
 
   // if(query.error) ctx.throw(400, "잘못된 요청입니다");
@@ -197,7 +322,7 @@ exports.userDelete = async (ctx)=>{
     const { uuid } = params.value;
     const { UUID } = ctx.request.user;
     const admNum = await user.chkMstAdmExist();
-    const userInfo = await user.isExistFromUUID(uuid);
+    const user = await user.isExistFromUUID(uuid);
 
     // console.log(admNum, ctx.query.uuid, "111111111111111111111111111111111");
     // console.log(UUID, "????????????????????????", ctx.query.uuid);
@@ -222,22 +347,21 @@ exports.delete = async(ctx)=>{
   const bufUUID = Buffer.from(UUID, 'hex');
 
   // console.log(ctx.request.user);
-
   const admNum = await user.chkMstAdmExist();
-  const userInfo = await user.isExistFromUUID(bufUUID)
+  const userMe = await user.isExistFromUUID(bufUUID)
 
-  // console.log(userInfo);
-  // console.log(userInfo.uuid);
-  // console.log(userInfo.login_id);
-  // let targetID = userInfo.login_id.replace(/kakao:/,"")
+  // console.log(user);
+  // console.log(user.uuid);
+  // console.log(user.login_id);
+  // let targetID = user.login_id.replace(/kakao:/,"")
   // targetID=Number(targetID);
   // console.log(typeof targetID);
 
   // const token = ctx.request.header.authorization;
   // console.log(token);
-  // console.log(userInfo, admNum, "dddddddddddddddddddddddddddddddd");
-  // console.log(userInfo.Auth, admNum);
-  if(userInfo.Auth === 3 && admNum <= 1) ctx.throw(400, "본 유저가 탈퇴시 최종관리자가 1명도 없으므로 탈퇴가 불가합니다.")
+  // console.log(user, admNum, "dddddddddddddddddddddddddddddddd");
+  // console.log(user.Auth, admNum);
+  if(userMe.Auth === 3 && admNum <= 1) ctx.throw(400, "본 유저가 탈퇴시 최종관리자가 1명도 없으므로 탈퇴가 불가합니다.")
   // console.log(KAKAO_ADMIN_KEY);
   // const config = {
   //   headers: {
