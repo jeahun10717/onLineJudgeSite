@@ -5,7 +5,8 @@ const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 const xss = require('xss');
 const helmet = require('koa-helmet');
-
+const multer = require('@koa/multer');
+const form_data = multer();
 
 const app = new koa();
 const router = new Router();
@@ -102,7 +103,7 @@ router.get('/add', ctx=>{
 });
 
 
-router.get('/oauth',async ctx=>{
+router.get('/oauth',async (ctx)=>{
    const { code } = ctx.query;
 
    const kakaoData = await oauth.kakao(code);
@@ -121,6 +122,7 @@ app.use(serve('./public'))
 app.use(serve('./multerFIleTest'))
 app.use(bodyParser({
     jsonLimit: '50mb', extended: true}))
+app.use(form_data.array());
 app.use(require('koa-morgan')('dev'));
 app.use(error);
 app.use(token.jwtMiddleware);

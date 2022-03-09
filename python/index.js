@@ -37,7 +37,3 @@ app.post('/', (req, res) => {
         res.json(results.map((d) => d.split(',')))
     })
 })
-
-app.listen(4001, ()=>{
-    console.log("judge file test port 4001");
-})

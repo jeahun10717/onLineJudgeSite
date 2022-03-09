@@ -17,8 +17,8 @@ const upload = multer({
     storage: storage
 });
 
-tasks.use(auth.login);
-tasks.use(auth.level1);
+// tasks.use(auth.login);
+// tasks.use(auth.level1);
 
 tasks.get('/', tasksCtrl.showTasks);
 // tasks.post('/multerTest', upload.fields([{name: 'file'}]),tasks.multerTest);
