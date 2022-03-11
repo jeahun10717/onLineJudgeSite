@@ -122,7 +122,9 @@ app.use(serve('./public'))
 app.use(serve('./multerFIleTest'))
 app.use(bodyParser({
     jsonLimit: '50mb', extended: true}))
-app.use(form_data.array());
+// app.use(form_data.array());
+// app.use(form_data.fields());
+
 app.use(require('koa-morgan')('dev'));
 app.use(error);
 app.use(token.jwtMiddleware);

@@ -5,20 +5,20 @@ const { auth } = require('../../lib');
 
 const multer = require('@koa/multer')
 const path = require('path');
-// const storage = multer.diskStorage({
-//     destination: function(ctx, file, cb){
-//         cb(null, `./src/multerFileTest/`);
-//     },
-//     filename: function(ctx, file, cb) {
-//         cb(null, file.originalname); // 업로드 할 파일 원래 이름으로 저장
-//     }
-// })
-// const upload = multer({
-//     storage: storage
-// });
-
 
 const {PythonShell} = require('python-shell');
+
+const storage = multer.diskStorage({
+    destination: function(ctx, file, cb){
+        cb(null, path.join(__dirname, `./python/Student_Id/1705645`));
+    },
+    filename: function(ctx, file, cb) {
+        cb(null, file.originalname); // 업로드 할 파일 원래 이름으로 저장
+    }
+})
+const upload = multer({
+    storage: storage
+});
 
 // judge.get('/', (ctx) => {
 //     ctx.body = (`
@@ -55,6 +55,7 @@ const {PythonShell} = require('python-shell');
 // })
 
 // judge.get('/test', judgeCtrl.test);
-judge.post('/multerTest', judgeCtrl.judge);
+judge.post('/multerTest2', upload.fields([{name: "test"}]), judgeCtrl.judge2);
+// judge.post('/multerTest', judgeCtrl.judge);
 
 module.exports = judge;

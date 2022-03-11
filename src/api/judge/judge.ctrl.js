@@ -31,3 +31,7 @@ exports.judge = async (ctx) => {
     // upload.single('test')
     console.log(ctx.files);
 }
+
+exports.judge2 = async (ctx)=>{
+    console.log(ctx.files);
+}
