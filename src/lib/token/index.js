@@ -44,6 +44,7 @@ exports.jwtMiddleware = async (ctx, next)=>{
          }
 
          ctx.request.user = {UUID: payload.UUID};
+         ctx.req.user = {UUID: payload.UUID};
       }
    }catch(e){
       ctx.throw(500,e);

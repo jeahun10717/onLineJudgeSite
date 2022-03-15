@@ -1,12 +1,26 @@
 const multer = require('@koa/multer');
-
-const filepath = 'test';
-
+const fs = require('fs');
+const path = require('path')
+const db = require('../../databases/models/user')
 const storage = multer.diskStorage({
-    destination: function(ctx, file, cb){
-        cb(null, `../python/${filepath}`);
+    destination: async function(ctx, file, cb){
+        const hexUUID = Buffer.from(ctx.user.UUID, 'hex');
+        const userInfo = await db.isExistFromUUID(hexUUID);
+        const studentID = userInfo.student_ID;
+        const storePath = path.join(__dirname, `../../api/judge/python/Student_Id/${studentID}`);
+
+        if(!fs.existsSync(storePath)){
+            fs.mkdirSync(storePath);
+        }
+        cb(null, storePath);
     },
-    filename: function(ctx, file, cb) {
-        cb(null, file.originalname); // 업로드 할 파일 원래 이름으로 저장
+    filename: function(ctx, file, cb){
+        cb(null, file.originalname);
     }
 })
+
+const upload = multer({
+    storage
+})
+
+module.exports = upload;

@@ -2,25 +2,40 @@ const Router = require('koa-router');
 const judge = new Router();
 const judgeCtrl = require('./judge.ctrl');
 const { auth } = require('../../lib');
+// const fs = require('fs');
+// const db = require('../../databases/models/user')
 
 const multer = require('@koa/multer')
+const cppUpload = require('../../lib/multer/index')
 const path = require('path');
 
 const {PythonShell} = require('python-shell');
 
 // const upload = multer();
 
+
+
 // const storage = multer.diskStorage({
-//     destination: function(ctx, file, cb){
-//         cb(null, path.join(__dirname, `./python/Student_Id/1705645`));
+//     destination: async function(ctx, file, cb){
+//         const hexUUID = Buffer.from(ctx.user.UUID, 'hex');
+//         const userInfo = await db.isExistFromUUID(hexUUID);
+//         const studentID = userInfo.student_ID;
+//         const storePath = path.join(__dirname, `./python/Student_Id/${studentID}`);
+
+//         if(!fs.existsSync(storePath)){
+//             fs.mkdirSync(storePath);
+//         }
+//         cb(null, storePath);
 //     },
-//     filename: function(ctx, file, cb) {
-//         cb(null, file.originalname); // 업로드 할 파일 원래 이름으로 저장
+//     filename: function(ctx, file, cb){
+//         cb(null, file.originalname);
 //     }
 // })
+
 // const upload = multer({
-//     storage: storage
-// });
+//     storage
+// })
+
 
 // judge.get('/', (ctx) => {
 //     ctx.body = (`
@@ -64,7 +79,9 @@ judge.use(auth.level1);
 // judge.post('/multerTest', upload.single('test'));
 // judge.post('/multerTest', judgeCtrl.judge);
 
-judge.post('/multerTest', judgeCtrl.multerInit, judgeCtrl.judge);
+//judge.post('/multerTest', judgeCtrl.multerInit, judgeCtrl.judge);
+// judge.post('/multerTest',judgeCtrl.judge);
+judge.post('/multerTest', cppUpload.single('test'),judgeCtrl.judge);
 
 // console.log(upload, "@@@@@@@@@@@@@@@@@@@");
 

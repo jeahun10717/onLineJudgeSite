@@ -23,7 +23,7 @@ exports.multerInit = async (ctx, next) => {
 
     const storage = multer.diskStorage({
         destination: function(ctx, file, cb){
-            cb(null, path.join(__dirname, `./python/Student_Id/1705645`));
+            cb(null, path.join(__dirname, `./python/Student_Id/${studentID}`));
         },
         filename: function(ctx, file, cb) {
             cb(null, file.originalname); // 업로드 할 파일 원래 이름으로 저장
@@ -38,12 +38,10 @@ exports.multerInit = async (ctx, next) => {
     console.log(__dirname);
     // console.log(upload, "!!!!!!!!!!!!!!!!");
 
-    upload.single('test');
+    await upload.single('test')(ctx, next);
 
     // console.log(studentID);
     // console.log(storage);
     // console.log(upload);
-
     // console.log(ctx);
-    next();
 }
