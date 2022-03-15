@@ -8,17 +8,19 @@ const path = require('path');
 
 const {PythonShell} = require('python-shell');
 
-const storage = multer.diskStorage({
-    destination: function(ctx, file, cb){
-        cb(null, path.join(__dirname, `./python/Student_Id/1705645`));
-    },
-    filename: function(ctx, file, cb) {
-        cb(null, file.originalname); // 업로드 할 파일 원래 이름으로 저장
-    }
-})
-const upload = multer({
-    storage: storage
-});
+// const upload = multer();
+
+// const storage = multer.diskStorage({
+//     destination: function(ctx, file, cb){
+//         cb(null, path.join(__dirname, `./python/Student_Id/1705645`));
+//     },
+//     filename: function(ctx, file, cb) {
+//         cb(null, file.originalname); // 업로드 할 파일 원래 이름으로 저장
+//     }
+// })
+// const upload = multer({
+//     storage: storage
+// });
 
 // judge.get('/', (ctx) => {
 //     ctx.body = (`
@@ -54,8 +56,16 @@ const upload = multer({
 //     })
 // })
 
+
+judge.use(auth.login);
+judge.use(auth.level1);
+
 // judge.get('/test', judgeCtrl.test);
-judge.post('/multerTest2', upload.fields([{name: "test"}]), judgeCtrl.judge2);
+// judge.post('/multerTest', upload.single('test'));
 // judge.post('/multerTest', judgeCtrl.judge);
+
+judge.post('/multerTest', judgeCtrl.multerInit, judgeCtrl.judge);
+
+// console.log(upload, "@@@@@@@@@@@@@@@@@@@");
 
 module.exports = judge;

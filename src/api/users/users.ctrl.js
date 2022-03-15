@@ -140,6 +140,7 @@ exports.regist = async(ctx, next) => {
 exports.userMe = async(ctx)=>{
   const { UUID } = ctx.request.user;
   const bufUUID = Buffer.from(UUID, 'hex');
+  console.log(UUID, bufUUID);
 
   const result = await user.isExistFromUUID(bufUUID);
   result.uuid = UUID

@@ -31,7 +31,6 @@ exports.pagenum = async (auth)=>{
   }
 }
 
-// TODO: 이부분 지금은 부동산 이름으로 검색하는데 다른 거 필요할지 선택해야 함
 exports.search = async(name1, name2, order, filter, page, contents) =>{
   return await db.query(`select
   hex(uuid) user_id, id, Auth, phone, name, student_ID, registAt
@@ -51,7 +50,6 @@ exports.pagenumSearch = async(name1, name2, filter, page, contents)=>{
 exports.update = async (id, query)=>{
     return await db.query("UPDATE users set ? where uuid = ?",[query, id]);
 }
-//TODO: 이 부분에서 id 부분 원래는 uuid 였는데 다른 곳에서 오류 생기면 바꿔야 함
 
 // Auth 2- 일반관리자 권한 주기
 exports.setADM = async (id, adm) =>{
