@@ -1,11 +1,11 @@
 const multer = require('@koa/multer');
 const fs = require('fs');
 const path = require('path')
-const db = require('../../databases/models/user')
+const userDB = require('../../databases/models/user')
 const storage = multer.diskStorage({
     destination: async function(ctx, file, cb){
         const hexUUID = Buffer.from(ctx.user.UUID, 'hex');
-        const userInfo = await db.isExistFromUUID(hexUUID);
+        const userInfo = await userDB.isExistFromUUID(hexUUID);
         const studentID = userInfo.student_ID;
         const storePath = path.join(__dirname, `../../api/judge/python/Student_Id/${studentID}`);
 
