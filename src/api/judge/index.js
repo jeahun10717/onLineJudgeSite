@@ -81,7 +81,7 @@ judge.use(auth.level1);
 
 //judge.post('/multerTest', judgeCtrl.multerInit, judgeCtrl.judge);
 // judge.post('/multerTest',judgeCtrl.judge);
-judge.post('/judge', cppUpload.single('test'),judgeCtrl.judge);
+judge.post('/', cppUpload.single('test'),judgeCtrl.judge);
 
 // console.log(upload, "@@@@@@@@@@@@@@@@@@@");
 
