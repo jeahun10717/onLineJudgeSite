@@ -23,38 +23,14 @@ exports.judge = async (ctx, next)=>{
     const studentID = userInfo.student_ID;
 
     const result = spawn('python', [`${__dirname}/python/test.py`, "111", "222"]);
+    const pyShStr = result.output.map(i => i && i.toString());
+    console.log(pyShStr);
+    // const score;
+    // const str = JSON.parse(pyShStr[1])
+    // console.log(pyShStr.result[0], pyShStr.result[1], pyShStr.result[2]);
 
-    let shellScript;
-    // 3. stdout의 'data'이벤트리스너로 실행결과를 받는다. 
-    
-    // await result.stdout.on('data', (data) => {
-    //     shellScript = data
-    //     console.log(data.toString()+ "!!!!!!!!!!!!!!!!!!!!!!!!!!"); 
-    // }); 
-    // // 4. 에러 발생 시, stderr의 'data'이벤트리스너로 실행결과를 받는다. 
-    // await result.stderr.on('data', (data) => { 
-    //     console.log(data.toString()); 
-    // });
     
 
-    // let options = {
-    //     mode: 'text',
-    //     pythonPath: 'python3', 
-    //     pythonOptions: ['-u'],
-    //     scriptPath: '.', // 수정필요
-    //     args: [`${problemName}, ${problemNum}`]
-    // }
-    
-    // let shellScript;
-
-    // console.log(PythonShell.run('./src/api/judge/python/test.py', options, function (err, results) {
-    //     if (err) throw err;
-    //     // console.log('results: %j', results);
-    //     shellScript = results;
-    //     // 파일 삭제 
-    //     return results
-    // }))
- 
     ctx.body = {
         status: 200,
         result: result.output.map(i => i && i.toString())
