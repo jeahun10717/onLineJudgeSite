@@ -6,9 +6,11 @@ const { params } = require('../users');
 const userDB = require('../../databases/models/user');
 const { PythonShell } = require('python-shell');
 
-const spawn = require('child_process').spawnSync;
+// const spawn = require('child_process').spawnSync;
 
 exports.judge = async (ctx, next)=>{
+    const spawn = require('child_process').spawnSync;
+
     const params = Joi.object({
         problemName: Joi.string().required(),
         problemNum: Joi.string().required()
@@ -22,7 +24,7 @@ exports.judge = async (ctx, next)=>{
     const userInfo = await userDB.isExistFromUUID(hexUUID);
     const studentID = userInfo.student_ID;
 
-    const result = spawn('python', [`${__dirname}/python/test.py`, "111", "222"]);
+    const result = spawn('python', [`${__dirname}/python/judge.py`, `${problemName}`, `${problemNum}`, `${studentID}`]);
     const pyShStr = result.output.map(i => i && i.toString());
     console.log(pyShStr);
     // const score;

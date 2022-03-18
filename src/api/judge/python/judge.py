@@ -9,7 +9,11 @@ Arg = sys.argv
 FileName = Arg[1] + ".cpp"
 ExeName = Arg[1]
 ProblemNum = Arg[2]
-Student_Id = "1721228"
+Student_Id = Arg[3]
+
+print (os.getcwd())
+
+os.chdir("./src/api/judge/python")
 
 fileList = os.listdir("./Problems/{}".format(ProblemNum))
 
