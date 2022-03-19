@@ -34,6 +34,17 @@ int main(void) {
 		fprintf(fp2, "%d\n", result);
 		result = 10;
 	}
+
+	// int cnt = 0;
+
+	// for (int i = 0; i < 1000000000; i++)
+	// {
+	// 	cnt ++;
+	// 	cnt --;
+	// }
+	
+	
+	
 	fclose(fp1);
 	fclose(fp2);
 
