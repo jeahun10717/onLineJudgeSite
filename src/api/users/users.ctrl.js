@@ -47,7 +47,7 @@ exports.isExist = async (ctx) => {
         // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         ctx.body = {
             status: 200,
-            data: {
+            result: {
                 Auth: result.Auth,
                 isExist: isExist ? true : false,
                 access_token: myToken

@@ -25,16 +25,20 @@ exports.judge = async (ctx, next)=>{
     const studentID = userInfo.student_ID;
 
     const result = spawn('python', [`${__dirname}/python/judge.py`, `${problemName}`, `${problemNum}`, `${studentID}`]);
+    
     const pyShStr = result.output.map(i => i && i.toString());
     // console.log(pyShStr[1]);
     // const score;
     // const str = JSON.parse(pyShStr[1])
     // console.log(pyShStr.result[0], pyShStr.result[1], pyShStr.result[2]);
+    
+    //TODO: python shell 이 던져주는 자료가 아래 형태가 아닐 떄 만들어야 함
+
     const rawShellStr = pyShStr[1].split('\n');
 
     const scoreArr = new Array(10);
-    for (let i = 1; i < rawShellStr.length; i++) {
-        scoreArr[i] = rawShellStr[i].split(',');
+    for (let i = 1; i < scoreArr.length + 1; i++) {
+        scoreArr[i - 1] = rawShellStr[i].split(',');
     }
 
     console.log(scoreArr);
@@ -43,6 +47,6 @@ exports.judge = async (ctx, next)=>{
 
     ctx.body = {
         status: 200,
-        result: result.output.map(i => i && i.toString())
+        result: scoreArr
     }   
 }
