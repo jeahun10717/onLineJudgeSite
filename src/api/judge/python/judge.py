@@ -11,7 +11,7 @@ ExeName = Arg[1]
 ProblemNum = Arg[2]
 Student_Id = Arg[3]
 
-print (os.getcwd())
+# print (os.getcwd())
 
 os.chdir("./src/api/judge/python")
 

@@ -33,20 +33,31 @@ exports.judge = async (ctx, next)=>{
     // console.log(pyShStr.result[0], pyShStr.result[1], pyShStr.result[2]);
     
     //TODO: python shell 이 던져주는 자료가 아래 형태가 아닐 떄 만들어야 함
+    // [
+    //     [ '1', '10', '0.30614', 'Perfect Credit' ],
+    //     [ '2', '10', '0.01038', 'Perfect Credit' ],
+    //     [ '3', '10', '0.01084', 'Perfect Credit' ],
+    //     [ '4', '10', '0.01141', 'Perfect Credit' ],
+    //     [ '5', '10', '0.01181', 'Perfect Credit' ],
+    //     [ '6', '10', '0.01278', 'Perfect Credit' ],
+    //     [ '7', '10', '0.01244', 'Perfect Credit' ],
+    //     [ '8', '10', '0.01221', 'Perfect Credit' ],
+    //     [ '9', '10', '0.01312', 'Perfect Credit' ],
+    //     [ '10', '10', '0.01463', 'Perfect Credit' ]
+    //   ]
+    const shellStr = pyShStr[1].split('\n').map(i=>i.split(','));
 
-    const rawShellStr = pyShStr[1].split('\n');
+    // const scoreArr = new Array(10);
+    // for (let i = 1; i < scoreArr.length + 1; i++) {
+    //     scoreArr[i - 1] = shellStr[i].split(',');
+    // }
 
-    const scoreArr = new Array(10);
-    for (let i = 1; i < scoreArr.length + 1; i++) {
-        scoreArr[i - 1] = rawShellStr[i].split(',');
-    }
-
-    console.log(scoreArr);
+    console.log(shellStr);
 
     // arr[5][2] (빈 배열 생성)
 
     ctx.body = {
         status: 200,
-        result: scoreArr
+        result: shellStr
     }   
 }
