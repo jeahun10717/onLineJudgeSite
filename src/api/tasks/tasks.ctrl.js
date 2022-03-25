@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const { S3 } = require('../../lib');
-const { tasks } = require('../../databases');
-const { user } = require('../../databases');
+const { task, user } = require('../../databases');
 
 exports.showTasks = async(ctx)=>{
     const { UUID } = ctx.request.user;

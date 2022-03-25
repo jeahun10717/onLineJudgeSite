@@ -10,6 +10,8 @@ const { PythonShell } = require('python-shell');
 
 exports.judge = async (ctx, next)=>{
     const spawn = require('child_process').spawnSync;
+    
+    console.log(spawn);
 
     const params = Joi.object({
         problemName: Joi.string().required(),
@@ -26,6 +28,8 @@ exports.judge = async (ctx, next)=>{
 
     const result = spawn('python', [`${__dirname}/python/judge.py`, `${problemName}`, `${problemNum}`, `${studentID}`]);
     
+    // console.log(result.toString());
+
     const pyShStr = result.output.map(i => i && i.toString());
     // console.log(pyShStr[1]);
     // const score;
@@ -40,7 +44,7 @@ exports.judge = async (ctx, next)=>{
     //     [ '4', '10', '0.01141', 'Perfect Credit' ],
     //      ....
     const shellStr = pyShStr[1].split('\n').map(i=>i.split(','));
-    
+
     ctx.body = {
         status: 200,
         result: shellStr
