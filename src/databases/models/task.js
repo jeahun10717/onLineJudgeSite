@@ -9,3 +9,7 @@ exports.update = async (id, query)=>{
 exports.showAll = async () => {
     return await db.query("SELECT * FROM tasks");
 }
+
+exports.showSome = async () => {
+    return await db.query("")
+}
