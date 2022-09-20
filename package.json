@@ -36,5 +36,14 @@
     "xss": "^1.0.8",
     "yamljs": "^0.3.0",
     "yarn": "^1.22.10"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeahun10717/onLineJudgeSite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jeahun10717/onLineJudgeSite/issues"
+  },
+  "homepage": "https://github.com/jeahun10717/onLineJudgeSite#readme"
 }

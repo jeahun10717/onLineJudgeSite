@@ -16,6 +16,7 @@ const serve = require('koa-static');
 const api = require('./api')
 
 const { oauth, token, error } = require('./lib');
+const { diskStorage } = require('multer');
 
 const { KAKAO_CLIENT_ID, KAKAO_REDIRECT_URI, NAVER_CLIENT_ID, NAVER_REDIRECT_URI } = process.env;
 
@@ -102,6 +103,16 @@ router.get('/add', ctx=>{
    `
 });
 
+let arr = ["t1", "t3sd"];
+
+// router.get('/dhtest', (ctx) => {
+//    ctx.body = arr;
+// })
+
+// router.post('/dhtest/:id', (ctx)=>{
+//    const test = ctx.params;
+//    const bodyTest = ctx.request.body;
+// })
 
 router.get('/oauth',async (ctx)=>{
    const { code } = ctx.query;
